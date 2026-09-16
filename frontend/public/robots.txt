@@ -1,0 +1,50 @@
+# ==============================================================================
+# Robots.txt for College Notes Exchange
+# Supports: Google, Bing, Yahoo, DuckDuckGo, Yandex, Baidu
+# AI Crawlers: OpenAI (GPTBot, ChatGPT-User), Anthropic (ClaudeBot), PerplexityBot, Google-Extended, Applebot
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Allow: /notes
+Allow: /notes/*
+Allow: /trending
+Allow: /study-groups
+Allow: /study-schedule
+Allow: /analytics
+Allow: /login
+Allow: /register
+Disallow: /settings
+Disallow: /messages
+Disallow: /chat
+Disallow: /api/
+
+# AI Search & Indexing Agents
+User-agent: GPTBot
+Allow: /
+Allow: /notes
+Allow: /trending
+Disallow: /settings
+Disallow: /messages
+Disallow: /chat
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /notes
+Allow: /trending
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /notes
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Sitemap Location
+Sitemap: https://notes-exchange.netlify.app/sitemap.xml

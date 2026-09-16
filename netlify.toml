@@ -1,0 +1,17 @@
+# ==============================================================================
+# Root Netlify Configuration for College Notes Exchange
+# Ensures builds succeed regardless of Netlify repo base folder configuration
+# ==============================================================================
+
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "frontend/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

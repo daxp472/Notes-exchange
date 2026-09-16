@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  
+  <!-- Homepage / Landing Page -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- Browse Notes & Materials Catalog -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/notes</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Trending Study Materials & Top Downloads -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/trending</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Collaborative Peer Study Groups -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/study-groups</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Exam Countdown & Study Schedule Planner -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/study-schedule</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Community Analytics & Academic Leaderboard -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/analytics</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- Student Registration / Sign Up -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/register</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- Student Portal Login -->
+  <url>
+    <loc>https://notes-exchange.netlify.app/login</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+</urlset>
