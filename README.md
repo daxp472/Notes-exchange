@@ -1,161 +1,119 @@
-# StudyHub - College Notes Exchange Platform
+# 📚 College Notes Exchange
 
-A full-stack web application for college students to share, download, and collaborate on academic notes.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![React](https://img.shields.io/badge/Frontend-React%2018%20%7C%20TypeScript%20%7C%20Vite-61DAFB?logo=react&logoColor=black)](https://notes-exchange.netlify.app/)
+[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS%20%7C%20Dark%20Mode-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%20ESM-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Supabase](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![Netlify Status](https://img.shields.io/badge/Deploy-Netlify-00C7B7?logo=netlify&logoColor=white)](https://notes-exchange.netlify.app/)
 
-## 🚀 Quick Start
+A modern, student-centric academic platform designed for university students to share lecture notes, download past exam question papers (PYQs), collaborate in study groups, and track syllabus deadlines.
 
-### Prerequisites
-- Node.js 18+
-- Supabase account (free tier works)
-- Cloudinary account (if using file uploads)
+🌐 **Live Website**: [https://notes-exchange.netlify.app/](https://notes-exchange.netlify.app/)
 
-### Backend Setup (Render Deployment)
+---
 
-1. **Clone repository** and navigate to `backend/` folder
+## 🌟 Key Features
 
-2. **Create `.env` file** in backend folder:
-   ```bash
-   cp .env.example .env
-   ```
+- 📑 **Lecture Notes & PYQs Hub**: Search, filter by semester and academic discipline (BCA, B.Tech, MBBS, MBA, Law, Sciences), and preview verified study materials.
+- 🪙 **NoteCoins Rewards System**: Earn NoteCoins for uploading notes, receiving high ratings, and unlock rewards or access peer notes.
+- 👥 **Real-Time Study Groups**: Create, join, and collaborate in discipline-specific study channels with direct resource sharing.
+- ⏳ **Exam Countdown & Study Schedule**: Plan study timetables, track syllabus milestones, and monitor exam countdown timers.
+- 💬 **Peer Messaging & Chat**: Private direct messages and group conversations with peer students.
+- 🌓 **Obsidian Midnight Dark Theme**: High-contrast, glassmorphism design optimized for nighttime study sessions.
+- ⚡ **Render Keep-Alive & Cloud Uptime**: Built-in keep-alive pinging service to keep cloud instances active 24/7.
+- 🔍 **SEO & AI Search Engine Optimized**: Rich JSON-LD Schema markup, comprehensive `sitemap.xml`, and open crawler discoverability for Google, Bing, GPTBot, and Perplexity.
 
-3. **Fill in environment variables** (get from Supabase dashboard):
-   - `SUPABASE_URL`: Your Supabase project URL
-   - `SUPABASE_SERVICE_ROLE_KEY`: Service role key
-   - `SUPABASE_ANON_KEY`: Anon key
-   - `JWT_SECRET`: Any strong random string
-   - `PORT`: 5001
+---
 
-4. **Deploy to Render**:
-   - Connect this repository to Render
-   - Create a Web Service
-   - Set environment variables in Render dashboard  
-   - Build command: `npm install`
-   - Start command: `npm start`
+## 🏗️ Repository Structure
 
-### Frontend Setup (Netlify Deployment)
-
-1. Navigate to `frontend/` folder
-
-2. **Create `.env.local` file**:
-   ```bash
-   cp .env.example .env.local
-   ```
-
-3. **Update** `VITE_API_URL` with your Render backend URL
-
-4. **Deploy to Netlify**:
-   - Connect repository to Netlify
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-
-## 📋 Database Requirements
-
-Supabase PostgreSQL tables needed:
 ```
-- users (id, name, email, password_hash, college, semester, is_active, last_activity, ...)
-- notes (id, title, description, subject, tags, uploaded_by, ...)
-- comments (id, note_id, user_id, comment_text, ...)
-- ratings (id, note_id, user_id, rating, ...)
-- private_messages (id, sender_id, receiver_id, message, ...)
-- groups (id, name, description, created_by, ...)
-- notifications (id, user_id, type, title, message, ...)
-- user_activity (id, user_id, action_type, ...)
+Notes-exchange/
+├── backend/                  # Node.js Express REST API server
+│   ├── config/              # Supabase client & Render keep-alive service
+│   ├── controllers/         # API business logic controllers
+│   ├── middleware/          # JWT auth & error handling middlewares
+│   ├── routes/              # Express route definitions
+│   └── server.js            # Server entry point
+├── frontend/                 # React 18 + TypeScript + Vite SPA
+│   ├── public/              # Static assets, robots.txt, sitemap.xml, _redirects
+│   ├── src/                 # React components, pages, contexts, and hooks
+│   └── netlify.toml         # Frontend deployment configuration
+├── database_scripts/         # PostgreSQL schema migrations and seed scripts
+│   ├── 01_full_schema.sql
+│   ├── 02_seed_sample_data.sql
+│   ├── 03_points_and_rewards_schema.sql
+│   ├── 04_add_avatar_url_and_bio.sql
+│   └── 05_complete_features_tables.sql
+├── docs/                     # Project architecture, guides, and documentation
+│   ├── DEPLOYMENT_GUIDE.md
+│   ├── PROJECT_ANALYSIS.md
+│   ├── SETUP_INSTRUCTIONS.md
+│   └── ai_rules/
+├── netlify.toml              # Root build & redirect configuration
+├── LICENSE                   # MIT License
+├── CONTRIBUTING.md           # Contribution guidelines
+└── SECURITY.md               # Security vulnerability disclosure
 ```
 
-## 🔑 Key Features
+---
 
-✅ Note sharing & browsing  
-✅ User authentication (JWT)  
-✅ Real-time notifications  
-✅ Private & group chat  
-✅ Ratings & comments  
-✅ Study groups  
-✅ Analytics dashboard  
-✅ Admin panel  
+## 🚀 Quick Start (Local Development)
 
-## 🛠️ API Endpoints
+### 1. Prerequisites
+- **Node.js**: v18.0+
+- **Supabase Account**: Free PostgreSQL database & Auth
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `GET /api/auth/profile` - Get current user
-
-### Notes
-- `GET /api/notes` - Browse all notes
-- `POST /api/notes` - Upload new note
-- `GET /api/notes/:id` - Get note details
-- `DELETE /api/notes/:id` - Delete note
-
-### Chat
-- `POST /api/chat/messages` - Send message
-- `GET /api/chat/contacts` - Get chat contacts
-
-### Inactivity Management
-- `POST /api/inactivity/keep-alive` - Keep account active
-- `GET /api/inactivity/status` - Check inactivity status
-
-## ⚠️ Important Notes
-
-- **Email Service Not Configured**: This project does NOT include email notifications. Only in-app notifications work.
-- **Inactive Accounts**: Users inactive for 7 days are automatically deactivated. Call `/api/inactivity/keep-alive` to reactivate.
-- **Rate Limiting**: Global rate limit of 1000 requests per 15 minutes.
-- **CORS**: Configure CORS with your frontend domain in production.
-
-## 🔐 Security
-
-- Passwords hashed with bcryptjs
-- JWT token-based authentication
-- SQL injection protection via prepared statements
-- Rate limiting enabled
-- Helmet.js security headers
-
-## 📝 Environment Variables Guide
-
-### Backend (.env)
+### 2. Backend Setup
+```bash
+cd backend
+cp .env.example .env
+# Edit .env and supply your SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and JWT_SECRET
+npm install
+npm run dev
 ```
-SUPABASE_URL         - Supabase project URL
-SUPABASE_SERVICE_ROLE_KEY - Service role key (backend only)
-JWT_SECRET           - JWT signing secret
-PORT                 - Server port (default: 5001)
-NODE_ENV             - development or production
+Backend runs on `http://localhost:5001` (Health: `http://localhost:5001/health`).
+
+### 3. Frontend Setup
+```bash
+cd frontend
+cp .env.example .env.local
+# Set VITE_API_URL=http://localhost:5001
+npm install
+npm run dev
 ```
+Frontend runs on `http://localhost:3000`.
 
-### Frontend (.env.local)
-```
-VITE_API_URL         - Backend API URL
-```
+---
 
-## 🚀 Deployment Checklist
+## 🗄️ Database Setup
 
-- [ ] Backend .env configured with Supabase keys
-- [ ] Frontend .env.local has correct API_URL
-- [ ] Database tables created in Supabase
-- [ ] Render deployed and running
-- [ ] Netlify deployed and running
-- [ ] CORS configured for your domain
-- [ ] Environment variables set in all platforms
+Run the SQL migration scripts in order from the [`database_scripts/`](database_scripts/) directory in your Supabase SQL Editor:
+1. `01_full_schema.sql` - Core users, notes, comments, ratings, messages
+2. `02_seed_sample_data.sql` - Sample subjects, universities, and notes
+3. `03_points_and_rewards_schema.sql` - NoteCoins point ledger & transactions
+4. `04_add_avatar_url_and_bio.sql` - User bio, profile photos & random avatars
+5. `05_complete_features_tables.sql` - Study groups, exam schedule, chat channels & activity tracking
 
-## 🆘 Troubleshooting
+---
 
-**"Unauthorized" errors**
-- Check JWT_SECRET is same on backend
-- Verify token is being sent in Authorization header
+## 📖 Documentation
 
-**"Connection refused" errors**
-- Check SUPABASE_URL is correct
-- Verify Supabase keys are valid
-- Ensure database tables exist
+Detailed documentation and guides are available in the [`docs/`](docs/) directory:
+- [Deployment Guide](docs/DEPLOYMENT_GUIDE.md)
+- [Project Architecture & Analysis](docs/PROJECT_ANALYSIS.md)
+- [Setup Instructions](docs/SETUP_INSTRUCTIONS.md)
+- [Features Implementation](docs/FEATURES_IMPLEMENTATION.md)
 
-**Notes not loading**
-- Check if uploaded_by field is correct
-- Verify user has access to notes table
+---
 
-## 📞 Support
+## 👨‍💻 Founder & Leadership
 
-For issues, check the logs:
-- Backend: `npm install` then `npm start`
-- Frontend: `npm run dev` for local testing
+- **Dax Patel** — *Founder & Lead Developer* ([@daxp472](https://github.com/daxp472))
+
+---
 
 ## 📄 License
 
-This project is provided as-is for educational purposes.
+This project is open source and available under the [MIT License](LICENSE).
