@@ -12,7 +12,7 @@ Welcome to the internal documentation and developer guides for the **College Not
 - **[Features Implementation](FEATURES_IMPLEMENTATION.md)**: Detailed breakdown of smart features, rewards, study groups, and chat.
 - **[Chat & Messaging Improvements](CHAT_IMPROVEMENTS.md)**: Real-time messaging and group channels specification.
 - **[Verification Checklist](VERIFICATION_CHECKLIST.md)**: Testing and quality assurance procedures.
-- **[AI Taxonomy & Rules](ai_rules/)**: Semantic search algorithms and semester taxonomy rules.
+- **[AI Taxonomy & Rules](../ai_rules/)**: Semantic search algorithms and semester taxonomy rules.
 
 ---
 
