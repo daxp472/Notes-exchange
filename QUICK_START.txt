@@ -1,0 +1,176 @@
+🚀 STUDYHUB - QUICK START GUIDE
+
+═══════════════════════════════════════════════════════════════
+
+✅ STEP 1: SETUP DATABASE (5 minutes)
+
+Go to: supabase.co → Your Project → SQL Editor
+
+1. Click "New Query"
+2. Copy & paste the contents of: DATABASE_SETUP.sql
+3. Click "Run" button
+4. Wait for query to finish
+5. You should see 3 rows in the results
+
+✅ If you see 3 columns (is_active, last_activity, deactivated_at), database is READY! ✅
+
+═══════════════════════════════════════════════════════════════
+
+✅ STEP 2: VERIFY BACKEND CONFIGURATION (2 minutes)
+
+Check backend/.env file contains:
+
+✅ SUPABASE_URL=https://qakkripgnofhgxnyaorc.supabase.co
+✅ SUPABASE_ANON_KEY=eyJhbGciOi...
+✅ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
+✅ CLOUDINARY_NAME=dk16ymotz
+✅ CLOUDINARY_KEY=555822297498988
+✅ CLOUDINARY_SECRET=K6gRv47EdbQ1-oaUYOh_TxH-ICA
+✅ JWT_SECRET=your_super_secret_jwt_key_here_minimum_32_characters
+✅ JWT_EXPIRE=7d
+
+Everything should be there now! ✅
+
+═══════════════════════════════════════════════════════════════
+
+✅ STEP 3: SETUP FRONTEND (2 minutes)
+
+Update: frontend/.env.local
+
+Current value:
+VITE_API_URL=https://rai-hackathone.onrender.com/api
+
+After you deploy backend to Render, update this with your Render URL
+
+═══════════════════════════════════════════════════════════════
+
+✅ STEP 4: TEST LOCALLY (Optional but recommended)
+
+Go to backend folder:
+```
+cd backend
+npm install
+npm start
+```
+
+You should see:
+```
+🚀 Server running on port 5001
+📚 College Notes Exchange API ready!
+🔗 Health check: http://localhost:5001/health
+```
+
+Test health check in browser:
+http://localhost:5001/health
+
+Should return: {"status":"OK","message":"..."}
+
+═══════════════════════════════════════════════════════════════
+
+✅ STEP 5: DEPLOY TO RENDER
+
+1. Push code to GitHub
+2. Go to render.com → Create Web Service
+3. Connect your GitHub repository
+4. Settings:
+   - Environment: Node
+   - Build Command: npm install
+   - Start Command: npm start
+   - PORT: 5001
+
+5. Environment Variables section - Add these from backend/.env:
+   - SUPABASE_URL
+   - SUPABASE_ANON_KEY
+   - SUPABASE_SERVICE_ROLE_KEY
+   - JWT_SECRET
+   - JWT_EXPIRE=7d
+   - CLOUDINARY_NAME
+   - CLOUDINARY_KEY
+   - CLOUDINARY_SECRET
+   - NODE_ENV=production
+   - PORT=5001
+   - FRONTEND_URL (update later)
+
+6. Click Deploy
+
+7. Wait 5-10 minutes
+8. Copy your Live URL (e.g., https://studyhub-xyz.onrender.com)
+
+═══════════════════════════════════════════════════════════════
+
+✅ STEP 6: DEPLOY FRONTEND TO NETLIFY
+
+1. Update frontend/.env.local:
+
+VITE_API_URL=https://studyhub-xyz.onrender.com/api
+(Replace with your actual Render URL)
+
+2. Push to GitHub
+3. Go to netlify.com → Add new site → Import from Git
+4. Select your repository
+5. Build settings:
+   - Build command: npm run build
+   - Publish directory: dist
+6. Add Environment Variables (from frontend/.env.local)
+7. Deploy
+8. Copy your Netlify domain
+
+═══════════════════════════════════════════════════════════════
+
+✅ STEP 7: UPDATE BACKEND FRONTEND_URL
+
+Go back to Render → Set Environment Variable:
+FRONTEND_URL=https://your-netlify-domain.netlify.app
+
+This enables CORS properly.
+
+═══════════════════════════════════════════════════════════════
+
+✅ FINAL TEST (5 minutes)
+
+1. Open your Netlify domain
+2. Register a new account
+3. Upload a note
+4. Try chat
+5. Check analytics
+6. Browse notes
+
+If everything works → ✅ PROJECT IS LIVE! ✅
+
+═══════════════════════════════════════════════════════════════
+
+❌ TROUBLESHOOTING:
+
+"Cannot connect to backend"
+→ Check Render URL in frontend/.env.local is correct
+→ Check Render deployment is active
+
+"Unauthorized errors"
+→ Check JWT_SECRET is filled in backend/.env
+→ Try logging out and logging back in
+
+"Database connection error"
+→ Check Supabase keys are correct
+→ Run DATABASE_SETUP.sql again
+
+"NotesPage doesn't load"
+→ Check notes table exists in Supabase
+→ Check user has uploaded at least 1 note
+
+═══════════════════════════════════════════════════════════════
+
+📋 EVERYTHING YOU NEED:
+
+✅ backend/.env - Filled with your keys
+✅ frontend/.env.local - Ready (update Render URL after deploy)
+✅ DATABASE_SETUP.sql - Ready to run
+✅ Backend code - Production ready
+✅ Frontend code - Production ready
+
+═══════════════════════════════════════════════════════════════
+
+RAJ TAYYAR HO!
+
+Now do the 7 steps above and you're LIVE! 🚀
+
+When database setup is done, tell me and I'll verify everything! ✅
