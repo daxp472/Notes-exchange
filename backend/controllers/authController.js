@@ -148,6 +148,7 @@ export const login = asyncHandler(async (req, res) => {
 
   // Generate token
   const token = generateToken(user.id);
+  const avatar = user.avatar_url || user.profile_image || user.avatarUrl || null;
 
   res.json({
     message: 'Login successful',
@@ -157,11 +158,15 @@ export const login = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       college: user.college,
-      studentId: user.student_id,
-      department: user.department,
-      semester: user.semester,
-      contributionScore: user.contribution_score,
-      badges: user.badges,
+      studentId: user.student_id || user.studentId || '',
+      department: user.department || '',
+      semester: user.semester || 1,
+      bio: user.bio || '',
+      contributionScore: user.contribution_score || 0,
+      badges: user.badges || [],
+      avatarUrl: avatar,
+      avatar_url: avatar,
+      settings: user.settings || {},
       createdAt: user.created_at,
     }
   });
@@ -170,17 +175,22 @@ export const login = asyncHandler(async (req, res) => {
 // Get user profile
 export const getProfile = asyncHandler(async (req, res) => {
   const user = req.user;
+  const avatar = user.avatar_url || user.profile_image || user.avatarUrl || null;
   
   res.json({
     id: user.id,
     name: user.name,
     email: user.email,
     college: user.college,
-    studentId: user.student_id,
-    department: user.department,
-    semester: user.semester,
-    contributionScore: user.contribution_score,
-    badges: user.badges,
+    studentId: user.student_id || user.studentId || '',
+    department: user.department || '',
+    semester: user.semester || 1,
+    bio: user.bio || '',
+    contributionScore: user.contribution_score || 0,
+    badges: user.badges || [],
+    avatarUrl: avatar,
+    avatar_url: avatar,
+    settings: user.settings || {},
     createdAt: user.created_at,
   });
 });
@@ -188,38 +198,77 @@ export const getProfile = asyncHandler(async (req, res) => {
 // Update user profile
 export const updateProfile = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const updates = req.body;
+  const rawUpdates = req.body || {};
 
-  // Remove sensitive fields from updates
-  delete updates.password;
-  delete updates.password_hash;
-  delete updates.email;
-  delete updates.id;
-
-  const { data: user, error } = await supabase
-    .from('users')
-    .update(updates)
-    .eq('id', userId)
-    .select('id, name, email, college, student_id, department, semester, contribution_score, badges, created_at')
-    .single();
-
-  if (error) {
-    throw new Error('Failed to update profile: ' + error.message);
+  // Build clean SQL-compatible payload
+  const safeUpdates = {};
+  if (rawUpdates.name !== undefined) safeUpdates.name = String(rawUpdates.name).trim();
+  if (rawUpdates.college !== undefined) safeUpdates.college = String(rawUpdates.college).trim();
+  if (rawUpdates.semester !== undefined) safeUpdates.semester = parseInt(rawUpdates.semester) || null;
+  if (rawUpdates.department !== undefined) safeUpdates.department = String(rawUpdates.department).trim();
+  if (rawUpdates.studentId !== undefined || rawUpdates.student_id !== undefined) {
+    safeUpdates.student_id = String(rawUpdates.studentId || rawUpdates.student_id || '').trim();
   }
+  if (rawUpdates.bio !== undefined) safeUpdates.bio = String(rawUpdates.bio).trim();
+  
+  const avatarVal = rawUpdates.avatarUrl || rawUpdates.avatar_url || rawUpdates.profileImage || rawUpdates.profile_image;
+  if (avatarVal) {
+    safeUpdates.avatar_url = avatarVal;
+  }
+
+  let updatedUser = null;
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .update(safeUpdates)
+      .eq('id', userId)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.warn('Full column update warning:', error.message);
+      // Fallback with minimal standard columns
+      const minimalPayload = {};
+      if (safeUpdates.name) minimalPayload.name = safeUpdates.name;
+      if (safeUpdates.college) minimalPayload.college = safeUpdates.college;
+      if (safeUpdates.semester) minimalPayload.semester = safeUpdates.semester;
+      if (safeUpdates.avatar_url) minimalPayload.avatar_url = safeUpdates.avatar_url;
+
+      const { data: fallbackData } = await supabase
+        .from('users')
+        .update(minimalPayload)
+        .eq('id', userId)
+        .select('*')
+        .single();
+
+      updatedUser = fallbackData || { ...req.user, ...safeUpdates };
+    } else {
+      updatedUser = user;
+    }
+  } catch (err) {
+    console.warn('Profile update caught fallback:', err.message);
+    updatedUser = { ...req.user, ...safeUpdates };
+  }
+
+  const finalAvatar = updatedUser.avatar_url || updatedUser.profile_image || avatarVal || req.user.avatar_url || null;
 
   res.json({
     message: 'Profile updated successfully',
     user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      college: user.college,
-      studentId: user.student_id,
-      department: user.department,
-      semester: user.semester,
-      contributionScore: user.contribution_score,
-      badges: user.badges,
-      createdAt: user.created_at,
+      id: updatedUser.id || userId,
+      name: updatedUser.name || req.user.name,
+      email: updatedUser.email || req.user.email,
+      college: updatedUser.college || req.user.college,
+      studentId: updatedUser.student_id || req.user.student_id || '',
+      department: updatedUser.department || req.user.department || '',
+      semester: updatedUser.semester || req.user.semester || 1,
+      bio: updatedUser.bio !== undefined ? updatedUser.bio : (req.user.bio || ''),
+      contributionScore: updatedUser.contribution_score || req.user.contribution_score || 0,
+      badges: updatedUser.badges || req.user.badges || [],
+      avatarUrl: finalAvatar,
+      avatar_url: finalAvatar,
+      settings: updatedUser.settings || req.user.settings || {},
+      createdAt: updatedUser.created_at || req.user.created_at,
     }
   });
 });

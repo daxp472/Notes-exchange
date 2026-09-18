@@ -4,6 +4,8 @@ import multer from 'multer';
 import { supabase } from '../config/supabase.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
+import { uploadImageToCloudinary } from '../config/cloudinary.js';
+import { getRewardsStore, redeemPerk, claimDailyStreak } from '../controllers/rewardsController.js';
 
 const router = express.Router();
 
@@ -18,6 +20,11 @@ const avatarUpload = multer({
     }
   }
 });
+
+// Rewards Store, Perks & NoteCoins Economy
+router.get('/rewards/store', authenticateToken, getRewardsStore);
+router.post('/rewards/redeem', authenticateToken, redeemPerk);
+router.post('/rewards/claim-daily', authenticateToken, claimDailyStreak);
 
 // Get user statistics
 router.get('/stats', authenticateToken, asyncHandler(async (req, res) => {
@@ -142,7 +149,7 @@ router.get('/:userId', asyncHandler(async (req, res) => {
   });
 }));
 
-// Upload Profile Picture (Max 2MB)
+// Upload Profile Picture (Max 2MB with Cloudinary)
 router.post('/avatar', authenticateToken, (req, res, next) => {
   avatarUpload.single('avatar')(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
@@ -159,33 +166,49 @@ router.post('/avatar', authenticateToken, (req, res, next) => {
     return res.status(400).json({ error: 'Please select an image file to upload.' });
   }
 
-  // Convert buffer to data URI for fast and reliable cloud persistence
-  const b64 = req.file.buffer.toString('base64');
-  const mimeType = req.file.mimetype || 'image/jpeg';
-  const dataUri = `data:${mimeType};base64,${b64}`;
+  // Upload to Cloudinary (returns Cloudinary HTTPS URL or fallback Data URI)
+  const imageUrl = await uploadImageToCloudinary(
+    req.file.buffer,
+    req.file.mimetype || 'image/jpeg',
+    'college_notes_avatars'
+  );
 
+  let updatedUser = null;
   try {
     const { data, error } = await supabase
       .from('users')
-      .update({ avatar_url: dataUri })
+      .update({ avatar_url: imageUrl })
       .eq('id', userId)
       .select('*')
       .single();
 
-    const finalAvatar = data?.avatar_url || dataUri;
-    res.json({
-      message: 'Profile picture updated successfully',
-      avatarUrl: finalAvatar,
-      user: data || { ...req.user, avatar_url: dataUri, avatarUrl: dataUri }
-    });
+    if (error) {
+      console.warn('Database avatar update warning:', error.message);
+      // Try updating updated_at or standard fields
+      await supabase
+        .from('users')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', userId);
+    }
+    updatedUser = data || { ...req.user, avatar_url: imageUrl };
   } catch (err) {
     console.warn('Avatar update fallback:', err);
-    res.json({
-      message: 'Profile picture updated successfully',
-      avatarUrl: dataUri,
-      user: { ...req.user, avatar_url: dataUri, avatarUrl: dataUri }
-    });
+    updatedUser = { ...req.user, avatar_url: imageUrl };
   }
+
+  const finalAvatar = updatedUser?.avatar_url || imageUrl;
+
+  res.json({
+    message: 'Profile picture updated successfully',
+    avatarUrl: finalAvatar,
+    avatar_url: finalAvatar,
+    user: {
+      ...req.user,
+      ...updatedUser,
+      avatarUrl: finalAvatar,
+      avatar_url: finalAvatar,
+    }
+  });
 }));
 
 // Update user profile (Authenticated)

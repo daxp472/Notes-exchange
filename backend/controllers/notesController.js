@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { supabase } from '../config/supabase.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { createNotification } from './notificationController.js';
+import { awardPoints } from './rewardsController.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -303,20 +304,8 @@ export const uploadNote = asyncHandler(async (req, res) => {
     throw new Error('Failed to save note: ' + error.message);
   }
 
-  // Update user contribution score
-  await supabase
-    .from('users')
-    .update({ contribution_score: req.user.contribution_score + 10 })
-    .eq('id', userId);
-
-  // Record user activity
-  await supabase
-    .from('user_activity')
-    .insert([{
-      user_id: userId,
-      note_id: note.id,
-      action_type: 'upload'
-    }]);
+  // Award 25 NoteCoins and record user activity
+  await awardPoints(userId, 25, 'upload', `Uploaded "${note.title}"`);
 
   res.status(201).json({
     message: 'Note uploaded successfully',
@@ -388,6 +377,11 @@ export const downloadNote = asyncHandler(async (req, res) => {
       }, {
         onConflict: 'user_id,note_id'
       });
+
+    // Reward note owner +5 NoteCoins if downloaded by another student
+    if (note.uploaded_by && note.uploaded_by !== userId) {
+      await awardPoints(note.uploaded_by, 5, 'download', `Peer downloaded "${note.title}"`);
+    }
   }
 
   // Return Cloudinary URL and original filename for frontend to handle
@@ -450,11 +444,14 @@ export const rateNote = asyncHandler(async (req, res) => {
       .single();
 
     if (note && note.uploaded_by !== userId) {
+      const pointValue = Number(rating) === 5 ? 20 : 10;
+      await awardPoints(note.uploaded_by, pointValue, 'rating', `Received ${rating}-star rating on "${note.title}"`);
+
       await createNotification(
         note.uploaded_by,
         'rating',
         'New Rating Received',
-        `Your note "${note.title}" received a ${rating}-star rating`,
+        `Your note "${note.title}" received a ${rating}-star rating (+${pointValue} NoteCoins)`,
         id
       );
     }
@@ -675,6 +672,9 @@ export const addComment = asyncHandler(async (req, res) => {
       id
     );
   }
+
+  // Award +5 NoteCoins for contributing to discussion
+  await awardPoints(userId, 5, 'comment', `Commented on "${noteData?.title || 'note'}"`);
 
   res.status(201).json({
     message: 'Comment added successfully',

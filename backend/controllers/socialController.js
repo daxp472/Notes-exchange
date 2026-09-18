@@ -1,5 +1,6 @@
 // Social Features Controller - Follow/Unfollow, Study Groups, Bookmarks
 import { supabase } from '../config/supabase.js';
+import { awardPoints } from './rewardsController.js';
 import { createEnhancedNotification } from './notificationsEnhancedController.js';
 
 export const socialController = {
@@ -467,7 +468,10 @@ export const socialController = {
 
       if (error) throw error;
 
-      res.json({ message: 'Successfully joined study group' });
+      // Award +20 NoteCoins welcome bonus
+      await awardPoints(userId, 20, 'join_group', 'Joined study group');
+
+      res.json({ message: 'Successfully joined study group (+20 NoteCoins awarded!)' });
 
     } catch (error) {
       console.error('Error joining study group:', error);

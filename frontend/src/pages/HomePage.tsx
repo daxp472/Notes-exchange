@@ -35,11 +35,11 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     fetchNotes({ sortBy: 'recent', sortOrder: 'desc' }, 1);
     
-    if (user) {
+    if (user?.id) {
       fetchDashboardStats();
       fetchRecentActivities();
     }
-  }, [fetchNotes, user]);
+  }, [user?.id]);
 
   const fetchDashboardStats = async () => {
     try {

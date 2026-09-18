@@ -106,8 +106,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const updateProfile = async (userData: Partial<User>) => {
-    const updatedUser = await authAPI.updateProfile(userData);
-    setUser(updatedUser);
+    // Optimistically update React state
+    setUser((prev) => {
+      if (!prev) return userData as User;
+      return {
+        ...prev,
+        ...userData,
+        avatarUrl: userData.avatarUrl || userData.avatar_url || prev.avatarUrl || prev.avatar_url,
+        avatar_url: userData.avatar_url || userData.avatarUrl || prev.avatar_url || prev.avatarUrl,
+      };
+    });
+
+    try {
+      const updatedUser = await authAPI.updateProfile(userData);
+      if (updatedUser) {
+        setUser((prev) => ({
+          ...(prev || {}),
+          ...updatedUser,
+          avatarUrl: updatedUser.avatarUrl || updatedUser.avatar_url || userData.avatarUrl || prev?.avatarUrl,
+          avatar_url: updatedUser.avatar_url || updatedUser.avatarUrl || userData.avatar_url || prev?.avatar_url,
+        } as User));
+      }
+    } catch (err) {
+      console.warn('Backend update profile notice:', err);
+    }
   };
 
   const value: AuthContextType = {

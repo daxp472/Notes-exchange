@@ -136,11 +136,13 @@ export const useNotifications = () => {
   }, []);
 
   const fetchUnreadCount = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
     try {
       const response = await notificationsAPI.getUnreadCount();
       setUnreadCount(response.unreadCount || 0);
     } catch (error) {
-      console.error('Failed to fetch unread count:', error);
+      // Silent error when offline or unauthenticated
     }
   };
 

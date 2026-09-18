@@ -109,6 +109,24 @@ export const userAPI = {
   },
 };
 
+// NoteCoins & Rewards Economy API
+export const rewardsAPI = {
+  getStore: async () => {
+    const { data } = await api.get('/users/rewards/store');
+    return data;
+  },
+
+  redeemPerk: async (perkId: string) => {
+    const { data } = await api.post('/users/rewards/redeem', { perkId });
+    return data;
+  },
+
+  claimDaily: async () => {
+    const { data } = await api.post('/users/rewards/claim-daily');
+    return data;
+  },
+};
+
 export const notesAPI = {
   getAllNotes: async (filters?: SearchFilters, page = 1) => {
     const params = new URLSearchParams();
